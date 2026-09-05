@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { RightsForm } from "@/components/RightsForm";
+import { IS_PLACEHOLDER_EMAIL, SITE } from "@/lib/config";
+export const metadata: Metadata = { title: "权利人联系与删除申请" };
+export default function RightsPage() { return <div className="site-container py-12 sm:py-16"><div className="grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><aside><p className="section-kicker">RIGHTS NOTICE · 权利通知</p><h1 className="section-title">权利人联系与删除申请</h1><p className="section-intro">如果您是相关内容的著作权人或合法授权代表，并认为本站展示的内容侵犯了您的合法权益，请提交完整通知。</p><div className="mt-8 border border-line bg-panel p-5 text-sm leading-7 text-muted"><p>联系邮箱</p><p className="mt-1 break-all text-lg text-paper">{SITE.rightsEmail}</p>{IS_PLACEHOLDER_EMAIL && <p className="mt-3 text-gold">这是演示邮箱，当前无法收件；正式上线前必须替换。</p>}</div><p className="mt-7 text-sm leading-7 text-muted">通知应包含权利人身份信息、权属证明、涉及内容的页面链接、联系方式及具体处理要求。本站将在收到完整材料后核验，并对争议内容采取暂时隐藏、补充授权信息或删除等措施。</p></aside><section className="border border-line bg-panel p-6 sm:p-8"><h2 className="font-serif text-2xl">报告版权问题</h2><p className="mt-3 mb-8 text-sm leading-6 text-muted">以下表单仅演示字段和校验流程，不会真实发送或保存信息。</p><RightsForm /></section></div></div>; }

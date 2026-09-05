@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound() { return <div className="site-container grid min-h-[60vh] place-items-center py-20 text-center"><div><p className="text-xs tracking-[.25em] text-gold">404 · FRAME NOT FOUND</p><h1 className="mt-6 font-serif text-4xl sm:text-6xl">这一帧不在放映中</h1><p className="mt-5 text-sm text-muted">页面可能已移动，或内容仍在版权审核中。</p><div className="mt-8 flex justify-center gap-4"><Link href="/" className="button-secondary">返回首页</Link><Link href="/explore" className="button-primary">探索画面</Link></div></div></div>; }
