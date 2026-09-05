@@ -8,6 +8,7 @@ interface FrameSpec {
   description: string;
   focus: string;
   technique: TechniqueKey;
+  shotSize?: Frame["shotSize"];
 }
 
 interface FilmDefaults {
@@ -90,7 +91,7 @@ const buildFrames = (defaults: FilmDefaults, specs: FrameSpec[]): Frame[] => spe
     palette: defaults.palette,
     colors: defaults.colors,
     compositions: technique.compositions,
-    shotSize: technique.shotSize,
+    shotSize: spec.shotSize ?? technique.shotSize,
     lights: technique.lights,
     lightDirection: technique.lightDirection,
     lightQuality: technique.lightQuality,
@@ -172,7 +173,7 @@ const trainSpecs: FrameSpec[] = [
   { slug:"train-brake-light", title:"最后一节车的红灯", description:"红色尾灯在雨夜铁轨上缩成唯一亮点", focus:"蓝黑空间里的红色信号", technique:"compression" },
   { slug:"train-washroom-mirror", title:"镜里空着的走廊", description:"窄镜映出身后空廊，人物肩部停在现实画面边缘", focus:"镜框深处的无人消失点", technique:"reflection" },
   { slug:"train-coupling-gap", title:"车厢连接处", description:"两节车厢之间的金属踏板在速度中持续震动", focus:"斜向轨道与明暗闪动", technique:"diagonal" },
-  { slug:"train-passing-field", title:"窗外退去的田野", description:"旅客剪影与月下田野在车窗玻璃中重叠", focus:"侧脸轮廓和横向光带", technique:"reflection" },
+  { slug:"train-passing-field", title:"窗外退去的田野", description:"旅客剪影与月下田野在车窗玻璃中重叠", focus:"侧脸轮廓和横向光带", technique:"reflection", shotSize:"近景" },
   { slug:"train-tea-carriage", title:"摇晃中倒满的茶", description:"列车晃动时，两双手共同扶稳茶杯和水壶", focus:"倾斜水线与相接手指", technique:"detail" },
   { slug:"train-station-bench", title:"短暂停靠的空椅", description:"空站椅隔着车窗出现，车内灯影覆盖其上", focus:"玻璃倒影中的空座", technique:"reflection" },
   { slug:"train-ticket-hand", title:"没有字的车票", description:"一只手把空白票递向走廊深处的另一只手", focus:"手势之间的小段距离", technique:"detail" },

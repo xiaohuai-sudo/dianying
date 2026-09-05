@@ -46,7 +46,7 @@ export const films: Film[] = [
     compositionNotes: "对称、纵深与框中框反复出现，铁轨和座椅线条把视线引向不可见的终点。",
     lightingNotes: "低调光为主，窗外间歇光源形成移动侧光，停电段落只保留微弱轮廓。",
     palette: ["#253E45", "#607A73", "#A2A176", "#22242B", "#0D1117"],
-    frameIds: ["train-aisle", "train-window", "train-platform", "train-sleeper", "train-dining-car", "train-tunnel", "train-luggage", "train-station-clock", ...(cinematicExpansionFrameIdsByFilm["night-train"] ?? [])], topicIds: ["framing-relationships", "negative-space", "low-key-information", "close-up-without-dialogue", "centered-composition"],
+    frameIds: ["train-aisle", "train-platform", "train-sleeper", "train-dining-car", "train-tunnel", "train-luggage", "train-station-clock", ...(cinematicExpansionFrameIdsByFilm["night-train"] ?? [])], topicIds: ["framing-relationships", "negative-space", "low-key-information", "close-up-without-dialogue", "centered-composition"],
   },
   {
     slug: "humid-summer", title: "潮湿的夏天", englishTitle: "A Humid Summer", year: 2023,
@@ -94,7 +94,6 @@ export const frames: Frame[] = [
   frame({ slug: "lane-dawn", filmSlug: "after-the-rain-lane", title: "雨停前的清晨", image: "/images/frames/lane-dawn.png", alt: "雨后清晨的空巷，一名虚构人物背对镜头走向淡青色天光", palette: ["#9AAEB0", "#607A80", "#B78261", "#27363D"], colors: ["冷蓝", "低饱和"], compositions: ["纵深", "留白"], shotSize: "远景", lights: ["自然光", "逆光"], lightDirection: "巷口正前方", lightQuality: "清晨均匀柔光", subjectPosition: "中央偏左远景", visualFocus: "巷口亮面与人物背影", scenes: ["街道"], moods: ["怀旧", "孤独"], time: "清晨", region: "中国东部", decade: "2020年代", analysis: "清晨天光抹平了夜里强烈的霓虹对比，巷道从神秘场所重新变回普通街道。人物背影沿纵深线走向最亮处，但低饱和色彩没有把这个方向解释成希望；湿墙仍保留冷意，空出的右侧让离开显得没有回应。经历一夜寻找后，画面不提供答案，而是用逐渐清晰的空间提醒观众：现实恢复可见，并不等于遗憾已经消失。" }),
 
   frame({ slug: "train-aisle", filmSlug: "night-train", title: "停电后的车厢", image: "/images/frames/train-aisle.png", alt: "昏暗列车车厢的对称过道，虚构乘客坐在两侧剪影中", palette: ["#243A41", "#61776C", "#A39A65", "#0D1115"], colors: ["绿色", "冷蓝", "低饱和"], compositions: ["对称", "纵深"], shotSize: "全景", lights: ["低调光", "轮廓光"], lightDirection: "车厢尽头应急灯", lightQuality: "微弱硬光与大面积暗部", subjectPosition: "人物分布两侧，中央无人", visualFocus: "过道尽头的一点绿光", scenes: ["列车"], moods: ["紧张", "神秘"], time: "夜晚", region: "中国北方", decade: "2010年代", analysis: "严格对称的座椅建立出冷静秩序，停电却让这个秩序只剩轮廓。中央过道像一条没有退路的黑色通道，把目光带向尽头的应急灯；两侧乘客彼此很近，却被高靠背切割成独立剪影。微绿光线既是安全标志，也带着病态色偏，使短暂沉默不再中性，仿佛每个人都在等待秘密先从别人一侧泄露。" }),
-  frame({ slug: "train-window", filmSlug: "night-train", title: "玻璃里的第二张脸", image: "/images/frames/train-window.png", alt: "夜行列车窗边的虚构人物侧脸与玻璃倒影重叠", palette: ["#31505C", "#79908A", "#B5A66B", "#151B21"], colors: ["冷蓝", "绿色"], compositions: ["框架", "三分法"], shotSize: "近景", lights: ["侧光", "自然光"], lightDirection: "窗外移动光源", lightQuality: "间歇硬侧光", subjectPosition: "左侧侧脸，倒影在右侧", visualFocus: "真实眼睛与倒影眼睛之间", scenes: ["列车"], moods: ["神秘", "孤独"], time: "夜晚", region: "中国北方", decade: "2010年代", analysis: "车窗把同一张脸拆成实体与倒影，两者并未精确重合，形成一种身份迟滞。外部移动光源只在瞬间擦过眼睛，其余表情沉在暗部，使观众无法确定哪一面更接近真实。窗框像画框固定住人物，窗外景物则被速度抹成色带。画面的叙事张力来自这种反差：身体被困在明确座位上，思想却随着反射不断偏离当前位置。" }),
   frame({ slug: "train-platform", filmSlug: "night-train", title: "无名站台", image: "/images/frames/train-platform.png", alt: "空旷夜间站台与停靠列车，一名虚构人物站在大片雾气中", palette: ["#43585D", "#8D987E", "#C3A66D", "#171D20"], colors: ["冷蓝", "低饱和"], compositions: ["留白", "纵深"], shotSize: "远景", lights: ["逆光", "轮廓光"], lightDirection: "站台远端雾灯", lightQuality: "雾气扩散柔光", subjectPosition: "右侧下方", visualFocus: "人物与列车门之间的亮雾", scenes: ["车站"], moods: ["孤独", "压抑"], time: "夜晚", region: "中国北方", decade: "2010年代", analysis: "大面积雾气抹去了站名与远景信息，让停靠失去地理意义。人物被放在右下角，左侧列车和上方空雾形成沉重留白，看似开放，实际没有可确认的方向。逆光没有揭示面孔，只勾勒衣领和行李边缘；人与车门之间那段最亮的距离因此成为选择本身。画面让抵达与离开同时存在，却拒绝告诉观众哪一个动作正在发生。" }),
 
   frame({ slug: "summer-bedroom", filmSlug: "humid-summer", title: "停转的吊扇", image: "/images/frames/summer-bedroom.png", alt: "褪绿色旧卧室里停转的吊扇，虚构少年躺在床边阴影中", palette: ["#C9C29B", "#829D82", "#5B6F63", "#E0A36D"], colors: ["绿色", "暖黄", "低饱和"], compositions: ["三分法", "留白"], shotSize: "全景", lights: ["自然光", "侧光"], lightDirection: "右侧百叶窗", lightQuality: "被窗帘过滤的柔侧光", subjectPosition: "左下角床沿", visualFocus: "上方停住的扇叶与窗光条纹", scenes: ["卧室"], moods: ["压抑", "怀旧"], time: "白天", region: "中国沿海", decade: "2020年代", analysis: "吊扇占据上方视觉中心却完全静止，观众几乎能从这种静止中感到闷热。人物缩在左下角，大片墙面把等待拉长；百叶窗光线在床单上留下规则条纹，与松散身体形成对照。褪绿色墙面降低了生命力，少量皮肤暖色也被环境吞没。画面没有表现汗水或动作，却通过空气仿佛不再流动的空间关系传达停电时的焦躁。" }),
@@ -120,9 +119,9 @@ export const topics: Topic[] = [
     { heading: "当暖光只照亮空位", paragraphs: ["如果最亮区域落在空桌、空椅或人物之间，暖光会强化缺席。观看者先被亮处吸引，随后才发现那里没有动作，温馨符号便转化成关系中没有被填满的位置。"], frameId: "teahouse-table" },
     { heading: "让色彩服从空间", paragraphs: ["分析暖色画面时，不妨先遮住色相，只观察人物比例、框架和阴影。若空间本身封闭，恢复色彩后，暖黄往往不会解除压迫，只会让它更具生活经验和怀旧质感。"] },
   ]},
-  { slug: "framing-relationships", title: "框架构图如何表现人物关系", excerpt: "门、窗、镜面与座椅都能成为第二层画框，把人物之间不可见的边界变成清楚的视觉事实。", author: "梁序", publishedAt: "2026-08-20", readTime: "10 分钟", coverFrameId: "train-window", relatedTopicIds: ["warm-yellow", "negative-space"], sections: [
+  { slug: "framing-relationships", title: "框架构图如何表现人物关系", excerpt: "门、窗、镜面与座椅都能成为第二层画框，把人物之间不可见的边界变成清楚的视觉事实。", author: "梁序", publishedAt: "2026-08-20", readTime: "10 分钟", coverFrameId: "teahouse-window", relatedTopicIds: ["warm-yellow", "negative-space"], sections: [
     { heading: "框中框是一种关系判断", paragraphs: ["天然框架不只是装饰。它决定人物是否共享同一视觉单元：两人处于同一个门框时更容易被理解为共同体，被不同竖线切开时，即使身体靠近，也会显得心理距离遥远。"], frameId: "teahouse-window" },
-    { heading: "反射制造不稳定身份", paragraphs: ["玻璃与镜面提供的框架会同时容纳人物和环境。倒影略微错位时，观众会感到自我认知与现实位置之间存在延迟，这种视觉分裂尤其适合表现犹疑、隐瞒和记忆。"], frameId: "train-window" },
+    { heading: "玻璃让靠近与阻隔同时发生", paragraphs: ["玻璃两侧的手掌已经靠得很近，却无法真正接触。竖直窗框把同一个告别动作分配到两个空间，倒影又把手势轻轻复制，让短暂的靠近带上迟疑。框架在这里不是装饰，而是两人关系无法跨越的实体边界。"], frameId: "train-platform-farewell" },
     { heading: "框架也能引导时间", paragraphs: ["前景框架要求视线穿越空间才能抵达人物，因此观看本身变得缓慢。距离被体验出来，关系的阻隔也就不必依赖对白解释。"] },
   ]},
   { slug: "rain-night-light", title: "雨夜镜头的五种光线设计", excerpt: "雨丝本身不会发光。逆光、路面反射、色温分层和雾化控制，才让雨夜拥有可读的空间。", author: "周岚", publishedAt: "2026-08-12", readTime: "9 分钟", coverFrameId: "lane-neon", relatedTopicIds: ["red-danger", "negative-space"], sections: [
@@ -172,7 +171,7 @@ export const topics: Topic[] = [
   { slug: "close-up-without-dialogue", title: "特写何时比台词更有效", excerpt: "特写并不天然等于情绪强烈。只有当材质、动作和前后镜头共同准备好，它才会成为真正的信息转折。", author: "许澄", publishedAt: "2026-08-08", readTime: "9 分钟", coverFrameId: "lane-letter", relatedTopicIds: ["depth-and-blocking", "negative-space"], sections: [
     { heading: "特写是一次信息取舍", paragraphs: ["镜头靠近后，环境会被大量排除。观众获得纸张纤维、手指压力或眼神变化，却暂时失去人物所在的位置。特写有效，是因为被放大的细节值得用环境信息交换。", "如果前一个镜头没有建立空间和动作，特写很容易只剩漂亮质感。先让观众知道角色面对什么，再靠近观察他如何触碰、回避或确认。"], frameId: "lane-letter" },
     { heading: "手部动作可以替代表情", paragraphs: ["握得太紧、停在半空、反复折叠，这些动作拥有明确节奏，并且比面部更少限定情绪答案。手与物体接触时，材质变化也会进入叙事：湿纸变软、旧墙粗糙、金属表面冰冷。"], frameId: "hill-letter" },
-    { heading: "让焦点落在关系之间", paragraphs: ["特写的视觉中心不一定是单个物体。信封边缘与雨丝的交叉、真实眼睛与倒影之间的空隙，都能成为关系性的焦点。观众阅读的不是物，而是两个视觉信息如何冲突。"], frameId: "train-window" },
+    { heading: "让焦点落在关系之间", paragraphs: ["特写的视觉中心不一定是单个物体。一张空白车票悬在两只手之间，最重要的不是票面，而是递出与接住尚未完成的那段距离。观众阅读的不是物，而是两个动作如何彼此试探。"], frameId: "train-ticket-hand" },
     { heading: "剪辑练习：同一特写接三种全景", paragraphs: ["把同一个手握信封特写分别接在空巷、拥挤车站和家庭餐桌之后。记录特写意义如何改变。这个练习说明，特写的情绪并不封存在画面内部，而由前后空间共同定义。"] },
   ]},
   { slug: "warm-cool-attention", title: "冷暖对比如何组织注意力", excerpt: "冷暖对比最有价值的不是让画面更“电影感”，而是把人物、空间与时间分配到不同色温区域。", author: "程泊", publishedAt: "2026-08-01", readTime: "10 分钟", coverFrameId: "lane-letter", relatedTopicIds: ["warm-yellow", "red-danger"], sections: [
