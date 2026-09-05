@@ -4,11 +4,12 @@ import { films, getFilm, getFrame, getTopic, publicFrames, topics } from "@/lib/
 import { isLocale, localizeFilm, localizeTopic, locales, withLocale } from "@/lib/i18n";
 import { visualIndex } from "@/lib/visual-index";
 import {
-  AboutView, BoardsView, CompareView, CopyrightView, ExploreView, FilmDetailView, FilmsView,
+  AboutView, BoardsView, CopyrightView, ExploreView, FilmDetailView, FilmsView,
   FrameDetailView, HomeView, RightsView, TopicDetailView, TopicsView, VisualIndexView, VisualTermView,
 } from "@/components/LocalizedViews";
+import { CompareViewClient } from "@/components/CompareViewClient";
 
-type Props = { params: Promise<{ lang: string; slug?: string[] }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+type Props = { params: Promise<{ lang: string; slug?: string[] }> };
 
 function pageTitle(locale: "zh" | "en", slug: string[]) {
   if (!slug.length) return locale === "zh" ? "镜间｜电影视觉语言与美学分析" : "Jingjian | Cinematic Visual Language";
@@ -32,8 +33,10 @@ export function generateStaticParams() {
   return locales.flatMap((lang) => paths.map((slug) => ({ lang, slug })));
 }
 
-export default async function LocalizedPage({ params, searchParams }: Props) {
-  const { lang, slug = [] } = await params; if (!isLocale(lang)) notFound(); const query = await searchParams; const [section, item, term] = slug;
+export const dynamicParams = false;
+
+export default async function LocalizedPage({ params }: Props) {
+  const { lang, slug = [] } = await params; if (!isLocale(lang)) notFound(); const [section, item, term] = slug;
   if (!section) return <HomeView locale={lang} />;
   if (section === "explore" && !item) return <ExploreView locale={lang} />;
   if (section === "films" && !item) return <FilmsView locale={lang} />;
@@ -43,7 +46,7 @@ export default async function LocalizedPage({ params, searchParams }: Props) {
   if (section === "topics" && item && getTopic(item)) return <TopicDetailView locale={lang} slug={item} />;
   if (section === "visual-index" && !item) return <VisualIndexView locale={lang} />;
   if (section === "visual-index" && item && term) return <VisualTermView locale={lang} groupSlug={item} termValue={term} />;
-  if (section === "compare" && !item) { const value = Array.isArray(query.frames) ? query.frames[0] : query.frames; return <CompareView locale={lang} ids={value?.split(",").filter(Boolean) ?? []} />; }
+  if (section === "compare" && !item) return <CompareViewClient locale={lang} />;
   if (section === "boards" && !item) return <BoardsView locale={lang} />;
   if (section === "about" && !item) return <AboutView locale={lang} />;
   if (section === "copyright" && !item) return <CopyrightView locale={lang} />;

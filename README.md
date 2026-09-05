@@ -11,6 +11,12 @@ pnpm install
 pnpm dev
 ```
 
+## GitHub Pages 发布
+
+项目已配置 `.github/workflows/deploy-pages.yml`。推送到 `main` 后会自动进行静态导出并发布到 GitHub Pages。仓库名变化时无需手工修改路径，工作流会把仓库名作为站点前缀注入构建。
+
+公开地址：`https://xiaohuai-sudo.github.io/dianying/`
+
 访问 `http://localhost:3000`，默认进入中文站。中文与英文路径分别为 `/zh/...` 和 `/en/...`，顶部“中 / EN”可在保留当前页面和查询条件的情况下切换语言。正式检查：
 
 ```bash
