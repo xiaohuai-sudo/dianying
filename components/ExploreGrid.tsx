@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { filterGroups, getFilm, publicFrames } from "@/lib/data";
 import { copy, displayTag, frameReading } from "@/lib/i18n";
 import type { FilterKey, FilterState, Frame, Locale } from "@/lib/types";
@@ -22,12 +22,20 @@ function curated(frames: Frame[]) {
 }
 
 export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
   const resultTop = useRef<HTMLDivElement>(null);
   const closeFiltersButton = useRef<HTMLButtonElement>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [paramsText, setParamsText] = useState("");
+  const searchParams = useMemo(() => new URLSearchParams(paramsText), [paramsText]);
+
+  useEffect(() => {
+    const syncFromLocation = () => setParamsText(window.location.search.slice(1));
+    syncFromLocation();
+    window.addEventListener("popstate", syncFromLocation);
+    return () => window.removeEventListener("popstate", syncFromLocation);
+  }, [pathname]);
 
   useEffect(() => {
     if (!filtersOpen) return;
@@ -50,10 +58,12 @@ export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
   const active = filterGroups.flatMap(({ key }) => filters[key].map((value) => ({ key, value })));
 
   const replaceParams = (mutate: (params: URLSearchParams) => void, reset = true) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(paramsText);
     mutate(params);
     if (reset) params.delete("limit");
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    const query = params.toString();
+    setParamsText(query);
+    router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });
     if (reset) window.requestAnimationFrame(() => resultTop.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
   const toggle = (key: FilterKey, value: string) => replaceParams((params) => {

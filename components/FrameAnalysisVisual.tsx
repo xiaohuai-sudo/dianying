@@ -28,7 +28,7 @@ export function FrameAnalysisVisual({ src, alt, annotations, locale }: { src: st
   return <div>
     <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label={locale === "zh" ? "画面分析标注" : "Frame-analysis overlays"}>{(Object.keys(labels) as Layer[]).map((value) => <button key={value} type="button" onClick={() => setLayer(value)} aria-pressed={layer === value} className={`min-h-11 border px-4 text-xs transition ${layer === value ? "border-gold bg-gold text-ink" : "border-line text-[#c3c0b8] hover:border-gold"}`}>{labels[value][locale === "zh" ? 0 : 1]}</button>)}</div>
     <figure>
-      <div className="image-frame aspect-video overflow-hidden bg-panel"><Image src={src} alt={alt} fill priority sizes="100vw" className="object-cover" />
+      <div className="image-frame aspect-video overflow-hidden bg-panel"><Image src={src} alt={alt} fill preload sizes="100vw" className="object-cover" />
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           {visible.map((item) => {
             if (item.kind === "thirds") return <span key={item.id} className="absolute inset-0 thirds-grid" />;

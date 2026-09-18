@@ -34,7 +34,9 @@ pnpm start
 - `lib/i18n.ts`：中英文界面、内容本地化、结构化读图、相似理由与画面标注数据。
 - `lib/extended-frames.ts`：新增 30 个画面的完整视觉分析与版权数据。
 - `lib/types.ts`：内容、版权、筛选和灵感板的公共类型。
-- `public/images/frames/`：原创演示画面。
+- `source-assets/frames/`：不直接公开的原创高质量源图。
+- `public/images/frames-optimized/`：供网站加载的 480/960/1280/1672px 响应式 WebP。
+- `scripts/optimize-images.mjs`：从源图重新生成公开图片的优化脚本。
 - `docs/image-prompts.md`：首批 50 张原创演示图的制作与审核记录。
 - `docs/cinematic-expansion.md`：新增 150 张摄影技法画面的制作规范与清单。
 
@@ -48,7 +50,17 @@ pnpm start
 - 每张画面详情提供构图、光线和人物关系标注层，标注数据采用相对坐标，不修改原图。
 - 对比工具最多容纳 4 张画面，并通过 `?frames=id1,id2` 形成可分享链接。
 
-新增内容时先扩展 `lib/data.ts`，再把图片放入 `public/images/frames/`。图片必须保持原始宽高比，填写可描述画面内容的替代文字，并在电影、画面和专题之间使用稳定 slug 关联。
+新增内容时先扩展 `lib/data.ts`，再把高质量源图放入 `source-assets/frames/`，文件名须与数据中的图片文件名一致。运行 `pnpm images:optimize` 生成公开 WebP 后再进行构建。图片必须保持原始宽高比，填写可描述画面内容的替代文字，并在电影、画面和专题之间使用稳定 slug 关联。
+
+## 图片性能
+
+GitHub Pages 不提供 Next.js 动态图片优化服务，因此项目在构建前预先生成四档 WebP。`lib/image-loader.ts` 根据浏览器通过 `sizes` 请求的显示宽度选择最接近的文件：卡片不会再下载详情页尺寸的大图，详情页仍能获得清晰版本。源 PNG 不放在 `public` 中，避免被静态部署产物重复发布。
+
+```bash
+pnpm images:optimize
+```
+
+优化脚本只重新生成比源图旧或缺失的文件，可以安全重复运行。提交新图片时，需要同时提交源图和生成后的 WebP。
 
 ## 收藏
 
