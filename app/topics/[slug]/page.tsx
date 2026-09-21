@@ -7,7 +7,7 @@ import { TopicCard } from "@/components/Cards";
 import { getFilm, getFrame, getTopic, topics } from "@/lib/data";
 
 export function generateStaticParams() { return topics.map(({ slug }) => ({ slug })); }
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const topic = getTopic((await params).slug); return topic ? { title: topic.title, description: topic.excerpt } : { title: "专题不存在" }; }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const topic = getTopic((await params).slug); return topic ? { title: topic.title, description: topic.excerpt, alternates: { canonical: `/zh/topics/${topic.slug}/` } } : { title: "专题不存在" }; }
 
 export default async function TopicPage({ params }: { params: Promise<{ slug: string }> }) {
   const topic = getTopic((await params).slug); if (!topic) notFound();

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ColorPalette } from "./Cards";
+import { ColorPalette } from "./Palette";
 import { CompareButton, useCompare } from "./CompareProvider";
 import { getFilm, getFrame } from "@/lib/data";
 import { displayTag, frameReading, localizeFilm, withLocale } from "@/lib/i18n";

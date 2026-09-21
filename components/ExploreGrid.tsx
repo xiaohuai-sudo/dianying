@@ -28,10 +28,12 @@ export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
   const closeFiltersButton = useRef<HTMLButtonElement>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [paramsText, setParamsText] = useState("");
+  const [searchDraft, setSearchDraft] = useState<string | null>(null);
+  const searchTimer = useRef<number | undefined>(undefined);
   const searchParams = useMemo(() => new URLSearchParams(paramsText), [paramsText]);
 
   useEffect(() => {
-    const syncFromLocation = () => setParamsText(window.location.search.slice(1));
+    const syncFromLocation = () => { setParamsText(window.location.search.slice(1)); setSearchDraft(null); };
     syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
@@ -52,19 +54,20 @@ export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
     });
     return next;
   }, [searchParams]);
-  const query = searchParams.get("q")?.trim() ?? "";
+  const query = (searchDraft ?? searchParams.get("q") ?? "").trim();
+  const searchValue = searchDraft ?? searchParams.get("q") ?? "";
   const sort = (searchParams.get("sort") as SortMode) || "curated";
   const limit = Math.max(PAGE_SIZE, Number(searchParams.get("limit")) || PAGE_SIZE);
   const active = filterGroups.flatMap(({ key }) => filters[key].map((value) => ({ key, value })));
 
-  const replaceParams = (mutate: (params: URLSearchParams) => void, reset = true) => {
+  const replaceParams = (mutate: (params: URLSearchParams) => void, reset = true, scroll = reset) => {
     const params = new URLSearchParams(paramsText);
     mutate(params);
     if (reset) params.delete("limit");
     const query = params.toString();
     setParamsText(query);
     router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });
-    if (reset) window.requestAnimationFrame(() => resultTop.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    if (scroll) window.requestAnimationFrame(() => resultTop.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
   const toggle = (key: FilterKey, value: string) => replaceParams((params) => {
     const values = params.getAll(key).flatMap((item) => item.split(",")).filter(Boolean);
@@ -72,7 +75,18 @@ export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
     const next = values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
     next.forEach((item) => params.append(key, item));
   });
-  const clear = () => replaceParams((params) => { [...filterGroups.map((group) => group.key), "q", "sort"].forEach((key) => params.delete(key)); });
+  const clear = () => { setSearchDraft(null); replaceParams((params) => { [...filterGroups.map((group) => group.key), "q", "sort"].forEach((key) => params.delete(key)); }); };
+
+  // Typing filters immediately from local draft state; the URL only catches up after the last
+  // keystroke, so the address bar stops rewriting (and re-scrolling the page) on every character.
+  useEffect(() => () => window.clearTimeout(searchTimer.current), []);
+  const updateSearch = (value: string) => {
+    setSearchDraft(value);
+    window.clearTimeout(searchTimer.current);
+    searchTimer.current = window.setTimeout(() => {
+      replaceParams((params) => { if (value.trim()) params.set("q", value); else params.delete("q"); }, true, false);
+    }, 220);
+  };
 
   const results = useMemo(() => {
     const needle = query.toLocaleLowerCase(locale === "zh" ? "zh-CN" : "en");
@@ -101,7 +115,7 @@ export function ExploreGrid({ locale = "zh" }: { locale?: Locale }) {
       {filtersOpen && <div className="fixed inset-0 z-[70] bg-black/70 lg:hidden" onClick={() => setFiltersOpen(false)}><aside role="dialog" aria-modal="true" aria-label={copy[locale].filters} className="absolute inset-x-0 bottom-0 max-h-[82vh] overflow-y-auto border-t border-gold/50 bg-panel p-5" onClick={(event) => event.stopPropagation()}><div className="mb-2 flex justify-end"><button ref={closeFiltersButton} type="button" onClick={() => setFiltersOpen(false)} className="button-secondary px-4">{copy[locale].close}</button></div>{filterContent}<button type="button" onClick={() => setFiltersOpen(false)} className="button-primary sticky bottom-3 mt-4 w-full">{locale === "zh" ? `查看 ${results.length} 个结果` : `View ${results.length} results`}</button></aside></div>}
     </div>
     <div ref={resultTop} className="scroll-mt-24">
-      <div className="grid gap-3 sm:grid-cols-[1fr_auto]"><label className="sr-only" htmlFor="frame-search">{copy[locale].search}</label><input id="frame-search" type="search" value={query} onChange={(event) => replaceParams((params) => { if (event.target.value) params.set("q", event.target.value); else params.delete("q"); })} placeholder={copy[locale].search} className="form-field min-h-12" /><label className="sr-only" htmlFor="frame-sort">{locale === "zh" ? "排序" : "Sort"}</label><select id="frame-sort" value={sort} onChange={(event) => replaceParams((params) => params.set("sort", event.target.value))} className="form-field min-h-12 sm:w-44">{sortOptions.map((option) => <option key={option.value} value={option.value}>{option[locale]}</option>)}</select></div>
+      <div className="grid gap-3 sm:grid-cols-[1fr_auto]"><label className="sr-only" htmlFor="frame-search">{copy[locale].search}</label><input id="frame-search" type="search" value={searchValue} onChange={(event) => updateSearch(event.target.value)} placeholder={copy[locale].search} className="form-field min-h-12" /><label className="sr-only" htmlFor="frame-sort">{locale === "zh" ? "排序" : "Sort"}</label><select id="frame-sort" value={sort} onChange={(event) => replaceParams((params) => params.set("sort", event.target.value))} className="form-field min-h-12 sm:w-44">{sortOptions.map((option) => <option key={option.value} value={option.value}>{option[locale]}</option>)}</select></div>
       <div className="mt-6 flex flex-col justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-end"><div><p className="text-sm text-[#aaa8a2]" aria-live="polite">{locale === "zh" ? "共找到" : "Found"} <span className="text-xl text-paper">{results.length}</span> {copy[locale].results}</p>{active.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{active.map(({ key, value }) => <button type="button" key={`${key}-${value}`} onClick={() => toggle(key, value)} className="tag min-h-9 hover:border-gold hover:text-gold">{displayTag(value, locale)} ×</button>)}</div>}</div><p className="text-xs leading-5 text-[#aaa8a2]">{locale === "zh" ? "同类任一匹配 · 跨类同时匹配" : "OR within groups · AND across groups"}</p></div>
       {results.length > 0 ? <><div className="mt-8 grid gap-x-6 gap-y-12 md:grid-cols-2 xl:grid-cols-3">{visible.map((item, index) => <FrameCard key={item.slug} frame={item} locale={locale} priority={index < 3} />)}</div>{visible.length < results.length && <div className="mt-14 text-center"><button type="button" onClick={() => replaceParams((params) => params.set("limit", String(limit + PAGE_SIZE)), false)} className="button-secondary min-w-44">{copy[locale].loadMore} · {visible.length}/{results.length}</button></div>}</> : <div className="mt-8 border border-dashed border-line py-20 text-center"><p className="font-serif text-2xl">{locale === "zh" ? "没有符合条件的画面" : "No frames match"}</p><p className="mt-3 text-sm text-muted">{locale === "zh" ? "减少一个筛选条件，或重新开始。" : "Remove a filter or begin again."}</p><button type="button" onClick={clear} className="button-secondary mt-6">{locale === "zh" ? "清除筛选" : "Clear filters"}</button></div>}
     </div>

@@ -2,16 +2,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ColorPalette, FrameCard, Tag } from "@/components/Cards";
+import { FrameCard, Tag } from "@/components/Cards";
+import { FrameTonePanel } from "@/components/Palette";
 import { CopyrightLine, CopyrightPanel } from "@/components/Copyright";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { getFilm, getFrame, publicFrames } from "@/lib/data";
+import { getFrameTone } from "@/lib/frame-tones.generated";
 import { buildFrameStudy } from "@/lib/visual-index";
 
 export function generateStaticParams() { return publicFrames.map(({ slug }) => ({ slug })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const item = getFrame((await params).slug); return item ? { title: `${item.title}｜画面分析`, description: item.analysis } : { title: "画面不存在" };
+  const item = getFrame((await params).slug); return item ? { title: `${item.title}｜画面分析`, description: item.analysis, alternates: { canonical: `/zh/frames/${item.slug}/` } } : { title: "画面不存在" };
 }
 
 export default async function FramePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -27,7 +29,7 @@ export default async function FramePage({ params }: { params: Promise<{ slug: st
     <header className="mt-8 flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><p className="section-kicker">FRAME ANALYSIS · 画面分析</p><h1 className="font-serif text-4xl sm:text-5xl">{item.title}</h1><p className="mt-3 text-sm text-muted">《{film.title}》 · {film.year} · 原创演示画面</p></div><FavoriteButton frameId={item.slug} /></header>
     <figure className="mt-10"><div className="image-frame aspect-video overflow-hidden"><Image src={item.image} alt={item.alt} fill loading="eager" sizes="100vw" className="object-cover" /></div><CopyrightLine info={item.copyright} /></figure>
     <section className="mt-14 grid gap-12 lg:grid-cols-[1.3fr_.7fr]">
-      <article><p className="section-kicker">READING THE FRAME · 读图</p><h2 className="section-title">画面如何影响情绪与叙事</h2><p className="mt-7 font-serif text-xl leading-10 text-[#ddd6ca] sm:text-2xl">{item.analysis}</p><div className="mt-10"><p className="mb-3 text-xs tracking-widest text-muted">主色提取</p><ColorPalette colors={item.palette} labeled /></div><div className="mt-6 flex flex-wrap gap-2">{[...item.colors, ...item.compositions, ...item.lights, ...item.moods].map((tag) => <Tag key={tag}>{tag}</Tag>)}</div></article>
+      <article><p className="section-kicker">READING THE FRAME · 读图</p><h2 className="section-title">画面如何影响情绪与叙事</h2><p className="mt-7 font-serif text-xl leading-10 text-[#ddd6ca] sm:text-2xl">{item.analysis}</p><div className="mt-10"><FrameTonePanel palette={item.palette} tone={getFrameTone(item.slug)} /></div><div className="mt-6 flex flex-wrap gap-2">{[...item.colors, ...item.compositions, ...item.lights, ...item.moods].map((tag) => <Tag key={tag}>{tag}</Tag>)}</div></article>
       <aside><h2 className="font-serif text-xl">视觉参数</h2><dl className="mt-5 divide-y divide-line border-y border-line">{facts.map(([label, value]) => <div key={label} className="py-4"><dt className="text-xs text-muted">{label}</dt><dd className="mt-1.5 text-sm leading-6 text-paper">{value}</dd></div>)}</dl></aside>
     </section>
     <section className="mt-16 border-y border-line py-14">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { films, getFilm, getFrame, getTopic, publicFrames, topics } from "@/lib/data";
-import { isLocale, localizeFilm, localizeTopic, locales, withLocale } from "@/lib/i18n";
+import { isLocale, localizeFilm, localizeTopic, locales } from "@/lib/i18n";
 import { visualIndex } from "@/lib/visual-index";
 import {
   AboutView, BoardsView, CopyrightView, ExploreView, FilmDetailView, FilmsView,
@@ -23,8 +23,9 @@ function pageTitle(locale: "zh" | "en", slug: string[]) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { lang, slug = [] } = await params; const locale = isLocale(lang) ? lang : "zh"; const tail = slug.length ? `/${slug.join("/")}` : "";
-  return { title: pageTitle(locale, slug), description: locale === "zh" ? "从色彩、构图、光影、空间与情绪读懂电影视觉语言。" : "Read cinematic visual language through color, composition, light, space and emotion.", alternates: { canonical: withLocale(locale, tail || "/"), languages: { "zh-CN": withLocale("zh", tail || "/"), en: withLocale("en", tail || "/") } } };
+  const { lang, slug = [] } = await params; const locale = isLocale(lang) ? lang : "zh";
+  const pathFor = (value: "zh" | "en") => (slug.length ? `/${value}/${slug.join("/")}/` : `/${value}/`);
+  return { title: pageTitle(locale, slug), description: locale === "zh" ? "从色彩、构图、光影、空间与情绪读懂电影视觉语言。" : "Read cinematic visual language through color, composition, light, space and emotion.", alternates: { canonical: pathFor(locale), languages: { "zh-CN": pathFor("zh"), en: pathFor("en") } } };
 }
 
 export function generateStaticParams() {

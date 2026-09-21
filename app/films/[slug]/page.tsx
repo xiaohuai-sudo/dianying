@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ColorPalette, FrameCard, Tag, TopicCard } from "@/components/Cards";
+import { FrameCard, Tag, TopicCard } from "@/components/Cards";
+import { ColorPalette } from "@/components/Palette";
 import { CopyrightLine } from "@/components/Copyright";
 import { films, getFilm, getFilmFrames, topics } from "@/lib/data";
 
@@ -10,7 +11,7 @@ export function generateStaticParams() { return films.map(({ slug }) => ({ slug 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const film = getFilm((await params).slug);
-  return film ? { title: `《${film.title}》`, description: film.visualStyle } : { title: "作品不存在" };
+  return film ? { title: `《${film.title}》`, description: film.visualStyle, alternates: { canonical: `/zh/films/${film.slug}/` } } : { title: "作品不存在" };
 }
 
 export default async function FilmPage({ params }: { params: Promise<{ slug: string }> }) {

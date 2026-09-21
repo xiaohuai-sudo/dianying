@@ -49,8 +49,4 @@ export function TopicCard({ topic, locale = "zh" }: { topic: Topic; locale?: Loc
   </Link>;
 }
 
-export function ColorPalette({ colors, labeled = false, locale = "zh" }: { colors: string[]; labeled?: boolean; locale?: Locale }) {
-  return <div className="flex min-h-16 overflow-hidden border border-line" aria-label={locale === "zh" ? "主要色卡" : "Primary color palette"}>{colors.map((color) => <div key={color} className="group/color relative flex min-w-0 flex-1 items-end p-2" style={{ backgroundColor: color }}><span className={`${labeled ? "opacity-100" : "opacity-0 group-hover/color:opacity-100"} rounded-sm bg-black/55 px-1.5 py-1 text-[10px] text-white transition-opacity`}>{color}</span></div>)}</div>;
-}
-
 export function FilmIndex({ locale = "zh" }: { locale?: Locale }) { return <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">{films.map((film) => <FilmCard key={film.slug} film={film} locale={locale} />)}</div>; }

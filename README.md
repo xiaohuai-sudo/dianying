@@ -37,6 +37,7 @@ pnpm start
 - `source-assets/frames/`：不直接公开的原创高质量源图。
 - `public/images/frames-optimized/`：供网站加载的 480/960/1280/1672px 响应式 WebP。
 - `scripts/optimize-images.mjs`：从源图重新生成公开图片的优化脚本。
+- `scripts/extract-frame-tones.mjs`：从 `public/images/frames-optimized/*-1672.webp` 提取曝光阶梯、主导色与画面统计，写入 `lib/frame-tones.generated.ts`。
 - `docs/image-prompts.md`：首批 50 张原创演示图的制作与审核记录。
 - `docs/cinematic-expansion.md`：新增 150 张摄影技法画面的制作规范与清单。
 
@@ -61,6 +62,16 @@ pnpm images:optimize
 ```
 
 优化脚本只重新生成比源图旧或缺失的文件，可以安全重复运行。提交新图片时，需要同时提交源图和生成后的 WebP。
+
+## 色卡与影调数据
+
+画面详情页的色卡由三层组成：手写主色（`lib/data.ts` 中的 `palette`）、从图片实测的曝光阶梯与主导色（`lib/frame-tones.generated.ts`）以及画面统计。实测数据由脚本扫描优化后的 WebP 生成，曝光分段以中间灰 0.18 为基准、每档约两档光圈；新增或替换图片后必须重新运行并提交生成文件：
+
+```bash
+pnpm palette:tones
+```
+
+色块文字颜色按背景亮度自动切换，色块可点击复制十六进制色值；这段交互是 `components/Palette.tsx` 中的客户端组件，页面本身仍为静态导出。
 
 ## 收藏
 
