@@ -1,6 +1,7 @@
 import { Film, Frame, Topic, CopyrightInfo, FilterKey } from "./types";
 import { extendedFrames } from "./extended-frames";
 import { cinematicExpansionFrameIdsByFilm, cinematicExpansionFrames } from "./cinematic-expansion";
+import { paletteOverrides } from "./palette-overrides";
 
 const originalCopyright = (title: string): CopyrightInfo => ({
   imageTitle: title,
@@ -82,7 +83,7 @@ export const films: Film[] = [
 
 const frame = (input: Omit<Frame, "copyright">): Frame => ({ ...input, copyright: originalCopyright(input.title) });
 
-export const frames: Frame[] = [
+const rawFrames: Frame[] = [
   frame({ slug: "teahouse-window", filmSlug: "southern-teahouse", title: "隔窗的午后", image: "/images/frames/teahouse-window.png", alt: "暖黄茶馆内，一个虚构人物隔着木窗坐在远处，窗外是青绿雨景", palette: ["#C39A5A", "#665A43", "#35544C", "#171613"], colors: ["暖黄", "绿色", "低饱和"], compositions: ["框架", "纵深"], shotSize: "全景", lights: ["自然光", "侧光"], lightDirection: "画面左侧窗外向室内", lightQuality: "阴天漫射柔光", subjectPosition: "右侧后景，被窗框包围", visualFocus: "窗框内的人物面部与白瓷茶杯", scenes: ["茶馆", "雨夜"], moods: ["孤独", "怀旧"], time: "白天", region: "中国南方", decade: "2010年代", analysis: "暖黄色没有把空间变得亲密，反而因前景木窗的深黑边缘显得陈旧而封闭。人物被安置在右侧后景，身体只占窗框内很小的面积，视线必须越过空桌与茶烟才能抵达他。左侧阴天柔光没有照亮整张脸，使等待成为一种缓慢、没有出口的状态；青绿色雨景则把室内暖色压成对往日的残余记忆。" }),
   frame({ slug: "teahouse-table", filmSlug: "southern-teahouse", title: "两只未碰的茶杯", image: "/images/frames/teahouse-table.png", alt: "旧茶馆圆桌上相对摆放两只茶杯，虚构人物分坐画面两侧", palette: ["#B98D52", "#7A5B3C", "#39483D", "#1B1916"], colors: ["暖黄", "低饱和"], compositions: ["对称", "留白"], shotSize: "中景", lights: ["烛光", "低调光"], lightDirection: "桌面中央向上反射", lightQuality: "局部柔光，四周快速衰减", subjectPosition: "人物分列左右边缘", visualFocus: "中央两只相隔的白瓷杯", scenes: ["茶馆"], moods: ["压抑", "怀旧"], time: "夜晚", region: "中国南方", decade: "2010年代", analysis: "近乎对称的座位暗示两人曾经拥有平等而亲近的关系，但中央空出的桌面把这种对称转化为僵持。两只茶杯比人物更亮，成为没有发生的交谈的替身。暖光只停留在桌心，人物脸部逐渐沉入边缘暗部，观众先读到距离，再辨认表情。画面因此用最普通的茶馆陈设，把沉默具体化为一段可测量的空间。" }),
   frame({ slug: "teahouse-rain", filmSlug: "southern-teahouse", title: "竹帘后的雨", image: "/images/frames/teahouse-rain.png", alt: "青绿色雨幕中的茶馆廊檐，虚构人物站在半透明竹帘后", palette: ["#79918A", "#405D57", "#B29A67", "#202A27"], colors: ["绿色", "冷蓝", "低饱和"], compositions: ["框架", "三分法"], shotSize: "中景", lights: ["自然光", "逆光"], lightDirection: "人物身后的庭院", lightQuality: "潮湿空气扩散的柔光", subjectPosition: "左侧三分线，隔着竹帘", visualFocus: "竹帘纹理与模糊侧脸", scenes: ["茶馆", "雨夜"], moods: ["神秘", "孤独"], time: "黄昏", region: "中国南方", decade: "2010年代", analysis: "半透明竹帘既允许观看又拒绝看清，使人物处在出现与消失之间。细密竖线像一道柔软的栅栏，将左侧侧脸切成碎片；右侧空廊则延长离开的方向。庭院逆光照亮雨丝，却没有给人物明确轮廓，观众感受到的是潮气和阻隔，而非事件本身。冷绿环境压过微弱暖色，让这场告别带着迟疑而非决绝。" }),
@@ -110,6 +111,9 @@ export const frames: Frame[] = [
   ...extendedFrames,
   ...cinematicExpansionFrames,
 ];
+
+/** 色卡质检台（scripts/studio）回填的实测色卡优先于手写 palette；未回填的画面保持原样。 */
+export const frames: Frame[] = rawFrames.map((item) => (paletteOverrides[item.slug] ? { ...item, palette: paletteOverrides[item.slug] } : item));
 
 export const publicFrames = frames.filter((item) => item.copyright.reviewStatus === "审核通过" && item.copyright.copyrightStatus !== "待版权审核");
 

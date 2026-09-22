@@ -14,6 +14,12 @@ import { CompareButton } from "./CompareProvider";
 import { FrameAnalysisVisual } from "./FrameAnalysisVisual";
 import { BoardManager } from "./BoardManager";
 import { RightsForm } from "./RightsForm";
+import { StyleReader } from "./StyleReader";
+
+/** 风格诊断：公开功能，分析在浏览器本地完成（见 components/StyleReader.tsx）。 */
+export function StyleReaderView({ locale }: { locale: Locale }) {
+  return <><header className="border-b border-line bg-panel/30"><div className="site-container py-12 sm:py-16"><p className="section-kicker">STYLE READER</p><h1 className="section-title">{locale === "zh" ? "风格诊断" : "Style reader"}</h1><p className="section-intro">{locale === "zh" ? "用自己的画面，对照导演与摄影指导的视觉语言，得到差距清单与可复制的生成提示词。" : "Measure your own frame against the visual language of directors and cinematographers, then take away a gap list and copy-ready prompts."}</p></div></header><StyleReader locale={locale} /></>;
+}
 
 export function HomeView({ locale }: { locale: Locale }) {
   const hero = getFrame("teahouse-window") ?? publicFrames[0];

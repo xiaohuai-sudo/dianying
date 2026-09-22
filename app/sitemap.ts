@@ -7,7 +7,7 @@ import { absoluteUrl } from "@/lib/config";
 export const dynamic = "force-static";
 
 /** Static export publishes both the default (unprefixed) tree and /zh, /en — list them all. */
-const staticPaths = ["", "/explore", "/films", "/topics", "/visual-index", "/boards", "/compare", "/about", "/copyright", "/rights"];
+const staticPaths = ["", "/explore", "/films", "/topics", "/visual-index", "/boards", "/compare", "/style", "/about", "/copyright", "/rights"];
 const priorityFor = (path: string) => (path === "" ? 1 : path.split("/").length === 2 ? 0.8 : 0.6);
 const rounded = (value: number) => Math.round(value * 10) / 10;
 const trailing = (path: string) => (path === "" ? "/" : `${path}/`);

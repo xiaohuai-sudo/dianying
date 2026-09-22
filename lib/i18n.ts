@@ -7,20 +7,20 @@ export const localeName = (locale: Locale) => locale === "zh" ? "中" : "EN";
 
 export const copy = {
   zh: {
-    nav: ["探索", "视觉索引", "电影", "专题", "灵感板", "关于"],
+    nav: ["探索", "视觉索引", "电影", "专题", "灵感板", "风格诊断", "关于"],
     menu: "菜单", close: "关闭", skip: "跳到正文", original: "本站原创", compare: "加入对比",
     removeCompare: "移出对比", compareNow: "开始对比", clear: "清除", loadMore: "加载更多",
     favorite: "收藏", search: "搜索画面、技法或情绪", filters: "筛选条件", results: "个画面",
   },
   en: {
-    nav: ["Explore", "Visual Index", "Films", "Topics", "Boards", "About"],
+    nav: ["Explore", "Visual Index", "Films", "Topics", "Boards", "Style Reader", "About"],
     menu: "Menu", close: "Close", skip: "Skip to content", original: "Jingjian Original", compare: "Add to compare",
     removeCompare: "Remove", compareNow: "Compare frames", clear: "Clear", loadMore: "Load more",
     favorite: "Save", search: "Search frames, techniques or moods", filters: "Filters", results: "frames",
   },
 } as const;
 
-export const navPaths = ["/explore", "/visual-index", "/films", "/topics", "/boards", "/about"];
+export const navPaths = ["/explore", "/visual-index", "/films", "/topics", "/boards", "/style", "/about"];
 export const withLocale = (locale: Locale, path = "/") => `/${locale}${path === "/" ? "" : path}`;
 
 const tagEnglish: Record<string, string> = {

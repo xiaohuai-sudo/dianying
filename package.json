@@ -9,7 +9,12 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "images:optimize": "node scripts/optimize-images.mjs",
-    "palette:tones": "node scripts/extract-frame-tones.mjs"
+    "palette:tones": "node scripts/extract-frame-tones.mjs",
+    "studio": "node scripts/studio/serve.mjs",
+    "studio:audit": "node scripts/studio/audit.mjs",
+    "studio:palette": "node scripts/studio/palette-check.mjs",
+    "studio:style": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/studio/ts-loader.mjs scripts/studio/style-check.mts",
+    "studio:style-demo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/studio/ts-loader.mjs scripts/studio/style-demo.mts"
   },
   "dependencies": {
     "next": "16.3.4",

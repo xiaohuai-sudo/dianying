@@ -5,7 +5,7 @@ import { isLocale, localizeFilm, localizeTopic, locales } from "@/lib/i18n";
 import { visualIndex } from "@/lib/visual-index";
 import {
   AboutView, BoardsView, CopyrightView, ExploreView, FilmDetailView, FilmsView,
-  FrameDetailView, HomeView, RightsView, TopicDetailView, TopicsView, VisualIndexView, VisualTermView,
+  FrameDetailView, HomeView, RightsView, StyleReaderView, TopicDetailView, TopicsView, VisualIndexView, VisualTermView,
 } from "@/components/LocalizedViews";
 import { CompareViewClient } from "@/components/CompareViewClient";
 
@@ -18,7 +18,7 @@ function pageTitle(locale: "zh" | "en", slug: string[]) {
   if (slug[0] === "films" && slug[1]) { const film = getFilm(slug[1]); if (film) return `${localizeFilm(film, locale).title} | Jingjian`; }
   if (slug[0] === "frames" && slug[1]) { const frame = getFrame(slug[1]); if (frame) return `${locale === "zh" ? frame.title : frame.slug.split("-").join(" ")} | Jingjian`; }
   if (slug[0] === "topics" && slug[1]) { const topic = getTopic(slug[1]); if (topic) return `${localizeTopic(topic, locale).title} | Jingjian`; }
-  const names: Record<string, [string, string]> = { films: ["虚构电影", "Fictional Films"], topics: ["美学专题", "Visual Essays"], boards: ["灵感板", "Inspiration Boards"], compare: ["画面对比", "Frame Comparison"], about: ["关于本站", "About"], copyright: ["版权说明", "Copyright"], rights: ["权利人联系", "Rights Contact"] };
+  const names: Record<string, [string, string]> = { films: ["虚构电影", "Fictional Films"], topics: ["美学专题", "Visual Essays"], boards: ["灵感板", "Inspiration Boards"], compare: ["画面对比", "Frame Comparison"], style: ["风格诊断", "Style Reader"], about: ["关于本站", "About"], copyright: ["版权说明", "Copyright"], rights: ["权利人联系", "Rights Contact"] };
   return names[slug[0]]?.[locale === "zh" ? 0 : 1] ?? "Jingjian";
 }
 
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  const base = [[], ["explore"], ["films"], ["topics"], ["visual-index"], ["boards"], ["compare"], ["about"], ["copyright"], ["rights"]];
+  const base = [[], ["explore"], ["films"], ["topics"], ["visual-index"], ["boards"], ["compare"], ["style"], ["about"], ["copyright"], ["rights"]];
   const paths = [...base, ...films.map((film) => ["films", film.slug]), ...publicFrames.map((frame) => ["frames", frame.slug]), ...topics.map((topic) => ["topics", topic.slug]), ...visualIndex.flatMap((group) => group.terms.map((term) => ["visual-index", group.slug, term.filterValue]))];
   return locales.flatMap((lang) => paths.map((slug) => ({ lang, slug })));
 }
@@ -48,6 +48,7 @@ export default async function LocalizedPage({ params }: Props) {
   if (section === "visual-index" && !item) return <VisualIndexView locale={lang} />;
   if (section === "visual-index" && item && term) return <VisualTermView locale={lang} groupSlug={item} termValue={term} />;
   if (section === "compare" && !item) return <CompareViewClient locale={lang} />;
+  if (section === "style" && !item) return <StyleReaderView locale={lang} />;
   if (section === "boards" && !item) return <BoardsView locale={lang} />;
   if (section === "about" && !item) return <AboutView locale={lang} />;
   if (section === "copyright" && !item) return <CopyrightView locale={lang} />;

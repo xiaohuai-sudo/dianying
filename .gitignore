@@ -7,3 +7,5 @@ out
 *.tsbuildinfo
 .DS_Store
 /dianyingwangzhan/
+# 工作台的本地决定记录（可提交的真源是 lib/palette-overrides.ts）
+.studio/
