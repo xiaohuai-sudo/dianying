@@ -46,30 +46,30 @@ test("新用户拿到初始积分，签到每天只加一次", async () => {
 
 test("生成：预扣 → 按实际 GPU 秒结算 → 退还差额（不重复扣）", async () => {
   now = Date.parse("2026-09-23T10:00:00Z");
-  const { call } = build({ runSeconds: 40 });
+  const { call } = build({ runSeconds: 15 });
   await call("/v1/session", { method: "POST" });
 
   const gen = await call("/v1/generate", { method: "POST", body: { kind: "rehearsal" } });
   assert.equal(gen.status, 202);
-  assert.equal(gen.data.reserved, 180);
-  assert.equal(gen.data.balance.held, 180);
-  assert.equal(gen.data.balance.available, 300 - 180);
+  assert.equal(gen.data.reserved, 40);
+  assert.equal(gen.data.balance.held, 40);
+  assert.equal(gen.data.balance.available, 300 - 40);
 
   const poll1 = await call(`/v1/task/${gen.data.taskId}`);
   assert.equal(poll1.data.status, "running");
 
-  now += 40_000; // 快进 40 秒
+  now += 15_000; // 快进 15 秒
   const poll2 = await call(`/v1/task/${gen.data.taskId}`);
   assert.equal(poll2.data.status, "succeeded");
-  assert.equal(poll2.data.seconds, 40);
-  assert.equal(poll2.data.charged, 40);
-  assert.equal(poll2.data.refunded, 140);
-  assert.equal(poll2.data.balance.available, 300 - 40);
+  assert.equal(poll2.data.seconds, 15);
+  assert.equal(poll2.data.charged, 15);
+  assert.equal(poll2.data.refunded, 40 - 15);
+  assert.equal(poll2.data.balance.available, 300 - 15);
   assert.equal(poll2.data.balance.held, 0);
 
   const poll3 = await call(`/v1/task/${gen.data.taskId}`);
-  assert.equal(poll3.data.charged, 40, "重复查询不应改变结算结果");
-  assert.equal(poll3.data.balance.available, 300 - 40);
+  assert.equal(poll3.data.charged, 15, "重复查询不应改变结算结果");
+  assert.equal(poll3.data.balance.available, 300 - 15);
 });
 
 test("任务失败：全额退还", async () => {
@@ -109,13 +109,13 @@ test("主动取消：全额退还", async () => {
 
 test("余额不足：402，且不产生任何持有", async () => {
   now = Date.parse("2026-09-23T10:00:00Z");
-  const { call } = build({ env: { NEW_USER_CREDITS: "50" } });
+  const { call } = build({ env: { NEW_USER_CREDITS: "30" } });
   await call("/v1/session", { method: "POST" });
   const gen = await call("/v1/generate", { method: "POST", body: { kind: "rehearsal" } });
   assert.equal(gen.status, 402);
   assert.equal(gen.data.code, "INSUFFICIENT_CREDITS");
   const bal = await call("/v1/balance");
-  assert.equal(bal.data.balance.available, 50);
+  assert.equal(bal.data.balance.available, 30);
   assert.equal(bal.data.balance.held, 0);
 });
 
@@ -140,6 +140,6 @@ test("健康检查暴露档位与预扣额", async () => {
   const { call } = build();
   const health = await call("/v1/health");
   assert.equal(health.data.provider, "mock");
-  assert.equal(health.data.tiers.rehearsal.preDeduct, 180);
+  assert.equal(health.data.tiers.rehearsal.preDeduct, 40);
   assert.equal(health.data.tiers.final.enabled, false);
 });

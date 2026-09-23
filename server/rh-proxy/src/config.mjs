@@ -9,8 +9,11 @@ export function loadConfig(env = {}) {
   const rehearsal = {
     kind: "rehearsal",
     label: "试镜档（Wan2.2 + LightX2V 6 步）",
-    // 预扣上限：跑完按实际 GPU 秒结算，多退少不补
-    preDeduct: num(env.REHEARSAL_PRE_DEDUCT, 180),
+    // 预扣上限：跑完按实际 GPU 秒结算，多退少不补。
+    // 实测（2026-09-23，81 帧 704×544，Standard）：耗时 1 分 39 秒 → 20 RH币，即 20 积分。
+    // 平台自报的「预计消耗 89 币」与预扣接口的 65 币 / 312 秒都偏高一倍以上，不要照着定。
+    // 预扣取 40（实测的两倍），给更多帧数/更慢的队列留余量。
+    preDeduct: num(env.REHEARSAL_PRE_DEDUCT, 40),
     instanceType: env.REHEARSAL_INSTANCE || "default",
     // 有 webappId 走 AI 应用接口；否则退回工作流接口
     webappId: env.REHEARSAL_WEBAPP_ID || "1949884135491985409",

@@ -47,7 +47,9 @@ npx wrangler deploy
 ## 积分口径
 
 - **1 积分 = 1 秒 Standard(24G) GPU**；Plus(48G) 每秒 2 积分（`CREDITS_PER_PLUS_SECOND`）。
-- 预扣取上限（试镜档 180），结算按**从 RUNNING 到 SUCCESS 的实际秒数**，差额自动退还。
+- 试镜档**实测 20 积分一条**（81 帧、1 分 39 秒 GPU 时间，2026-09-23，见
+  `docs/video-generation-options.md` 第九节）；预扣取 **40**（实测两倍），结算按**从 RUNNING 到
+  SUCCESS 的实际秒数**，差额自动退还。
   排队时间不计费。
 - 失败 / 取消 / 排队超时（默认 900 秒）→ 全额退还。
 - 幂等键是 provider 的 `taskId`：重复查询不会重复扣。
@@ -55,6 +57,6 @@ npx wrangler deploy
 
 ## 还没做的（下一步）
 
-1. 用一条真实运行钉死试镜档的实际秒数，再把 `REHEARSAL_PRE_DEDUCT` 从 180 调到实测值附近。
+1. ~~用一条真实运行钉死试镜档的实际秒数~~ 已完成：实测 20 积分/条，`REHEARSAL_PRE_DEDUCT` 已设为 40。
 2. 真正的登录态（现在只有 `X-User-Id`）。
 3. 站内的「生成」按钮：前端只跟这个代理说话，永远不接触 RunningHub。
