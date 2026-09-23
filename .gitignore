@@ -11,3 +11,6 @@ out
 .studio/
 # 生成代理的本地积分账本（部署时用 Workers KV，不进仓库）
 server/rh-proxy/.data/
+
+# wrangler 本地状态目录
+server/rh-proxy/.wrangler/
