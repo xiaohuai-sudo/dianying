@@ -62,14 +62,15 @@ test("生成：预扣 → 按实际 GPU 秒结算 → 退还差额（不重复�
   const poll2 = await call(`/v1/task/${gen.data.taskId}`);
   assert.equal(poll2.data.status, "succeeded");
   assert.equal(poll2.data.seconds, 15);
-  assert.equal(poll2.data.charged, 15);
-  assert.equal(poll2.data.refunded, 40 - 15);
-  assert.equal(poll2.data.balance.available, 300 - 15);
+  // 15 秒 × 0.2 币/秒 = 3 积分（1 积分 = 1 RH币）
+  assert.equal(poll2.data.charged, 3);
+  assert.equal(poll2.data.refunded, 40 - 3);
+  assert.equal(poll2.data.balance.available, 300 - 3);
   assert.equal(poll2.data.balance.held, 0);
 
   const poll3 = await call(`/v1/task/${gen.data.taskId}`);
-  assert.equal(poll3.data.charged, 15, "重复查询不应改变结算结果");
-  assert.equal(poll3.data.balance.available, 300 - 15);
+  assert.equal(poll3.data.charged, 3, "重复查询不应改变结算结果");
+  assert.equal(poll3.data.balance.available, 300 - 3);
 });
 
 test("任务失败：全额退还", async () => {

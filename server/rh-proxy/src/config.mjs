@@ -1,7 +1,9 @@
 // 代理的配置：全部来自环境变量，前端拿不到任何密钥。
 //
-// 积分口径（见 docs/video-generation-options.md 第七/八节）：
-//   1 积分 = 1 秒 Standard(24G) GPU；Plus(48G) 每秒 2 积分。
+// 积分口径（见 docs/video-generation-options.md 第七节）：
+//   1 积分 = 1 RH币（直接镜像平台账单单位）。
+//   Standard(24G) 每秒 0.2 币 → 单价 0.2 积分/秒；Plus(48G) 每秒 0.4 币（plusFactor = 2）。
+//   实测锚点：704×544/81 帧 i2v 在 Standard 跑 99 秒 = 20 RH币 = 20 积分。
 export function loadConfig(env = {}) {
   const num = (v, d) => (v === undefined || v === "" ? d : Number(v));
   const plusFactor = num(env.CREDITS_PER_PLUS_SECOND, 2);
@@ -36,7 +38,8 @@ export function loadConfig(env = {}) {
   return {
     newUserCredits: num(env.NEW_USER_CREDITS, 300),
     dailySigninCredits: num(env.DAILY_SIGNIN_CREDITS, 20),
-    creditsPerSecond: num(env.CREDITS_PER_SECOND, 1),
+    // 0.2 = Standard 档每秒的 RH币单价 ⇒ 收费积分与平台账单一致（99 秒 → 20 积分）
+    creditsPerSecond: num(env.CREDITS_PER_SECOND, 0.2),
     plusFactor,
     tiers: { rehearsal, final },
     providerName: env.RH_PROVIDER || (env.RH_API_KEY ? "runninghub" : "mock"),
