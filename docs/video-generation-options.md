@@ -416,3 +416,46 @@ python scripts/studio/rh-tune.py --webapp 1903013826319519745 \
   --image <clip.mp4> --num "1" --switch on --tag X-只放大2倍
 ```
 
+### 直接改参数：`/task/webapp/create` + `inputs[]` 覆盖（已实测）
+
+应用表单只暴露「图 + 提示词」，但**站点自己的提交接口接受任意节点覆盖**，所以分辨率不需要走编辑器：
+
+```json
+POST /task/webapp/create
+{
+  "webappId": "2101715005812068354",
+  "inputs": [
+    {"nodeId":"4","nodeName":"LoadImage","fieldName":"image","fieldValue":"<上传后的文件名>"},
+    {"nodeId":"7","nodeName":"RHMiniMaxH3FL2VAEncode","fieldName":"prompt","fieldValue":"<提示词>"},
+    {"nodeId":"6","nodeName":"RHMiniMaxH3FL2VATarget","fieldName":"width","fieldValue":1280},
+    {"nodeId":"6","nodeName":"RHMiniMaxH3FL2VATarget","fieldName":"height","fieldValue":704},
+    {"nodeId":"30","nodeName":"ImageResize+","fieldName":"width","fieldValue":1280},
+    {"nodeId":"31","nodeName":"ImageResize+","fieldName":"width","fieldValue":1280}
+  ],
+  "clientId": "<32 位十六进制>",
+  "instanceType": "plus",
+  "usePersonalQueue": false
+}
+```
+
+**实测验证**：请求 640×352，产出就是 **640×352**（24fps · 带音频 · 零重复帧），**43 币 / 01:47**；
+默认 832×480 是 58 币 / 02:23 —— 计费随像素量走，分辨率完全可控。
+
+**鉴权**：`/task/*` 与多数 `/api/*` 需要请求头 `Authorization: <Rh-Accesstoken>`（就是同名 cookie，
+`Bearer <token>` 也行）。缺了它服务器返回 **HTTP 200 但 `code:403 TOKEN_MISSION`**——看起来像权限问题，
+其实只是少一个头（`token` / `X-Token` / `Rh-Token` 这些名字都不认；`Rh-Comfy-Auth` 查询参数只给
+ComfyUI 编辑器代理用）。
+
+**编辑器（若要改图结构与采样参数）**：`/api/workflow/copy` {workflowId, copyMode:1} 造实例 →
+`/task/create` {workflowId:<实例id>, promptContent:"<API 格式图 JSON 字符串>"} 排队。
+
+工具：`scripts/studio/rh-run-direct.py`（本机工作台）——一条命令提交带覆盖的任务并落表：
+
+```bash
+python scripts/studio/rh-run-direct.py --webapp 2101715005812068354 \
+  --image-name <文件名> --prompt "……" --instance plus \
+  --set "6:width=1280,6:height=704,30:width=1280,30:height=704,31:width=1280,31:height=704" \
+  --tag A-原生720p
+```
+
+
