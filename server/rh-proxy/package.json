@@ -1,0 +1,16 @@
+{
+  "name": "jingjian-rh-proxy",
+  "private": true,
+  "type": "module",
+  "description": "镜间生成代理：RunningHub Key 只留服务端，把平台账单映射成站内积分。",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node --test test/flow.test.mjs",
+    "kv:create": "wrangler kv namespace create CREDITS",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -1,0 +1,19 @@
+# 临时预览部署用的配置：不挂 KV（预览账号没有存储），provider 固定 mock。
+#   npx wrangler deploy --config wrangler.preview.toml --temporary
+# 只用来验证 Workers 运行时链路上不上得通，一个 RH币不花、积分不落盘。
+name = "jingjian-rh-proxy-preview"
+main = "worker.mjs"
+compatibility_date = "2026-09-01"
+
+[vars]
+RH_PROVIDER = "mock"
+RH_API_BASE = "https://www.runninghub.cn"
+NEW_USER_CREDITS = "300"
+DAILY_SIGNIN_CREDITS = "20"
+CREDITS_PER_SECOND = "1"
+REHEARSAL_PRE_DEDUCT = "180"
+REHEARSAL_INSTANCE = "default"
+REHEARSAL_WEBAPP_ID = "1949884135491985409"
+REHEARSAL_WORKFLOW_ID = "1949877835465932801"
+QUEUE_TIMEOUT_SEC = "900"
+ALLOWED_ORIGINS = "https://xiaohuai-sudo.github.io,http://127.0.0.1:4175"

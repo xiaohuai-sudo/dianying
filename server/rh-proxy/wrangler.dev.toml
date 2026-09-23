@@ -1,0 +1,24 @@
+# 本地用 wrangler 跑真实 Workers 运行时（workerd + miniflare 本地 KV），不上云、不联网。
+#   npx wrangler dev --config wrangler.dev.toml
+# 用来验证「Workers 运行时 + KV 绑定 + 积分链路上通」——电脑在墙内也能跑。
+name = "jingjian-rh-proxy-dev"
+main = "worker.mjs"
+compatibility_date = "2026-09-01"
+
+[vars]
+RH_PROVIDER = "mock"
+RH_API_BASE = "https://www.runninghub.cn"
+NEW_USER_CREDITS = "300"
+DAILY_SIGNIN_CREDITS = "20"
+CREDITS_PER_SECOND = "1"
+REHEARSAL_PRE_DEDUCT = "180"
+REHEARSAL_INSTANCE = "default"
+REHEARSAL_WEBAPP_ID = "1949884135491985409"
+REHEARSAL_WORKFLOW_ID = "1949877835465932801"
+QUEUE_TIMEOUT_SEC = "900"
+ALLOWED_ORIGINS = "https://xiaohuai-sudo.github.io,http://127.0.0.1:4175"
+
+[[kv_namespaces]]
+binding = "CREDITS"
+id = "0000000000000000000000000000000a"
+preview_id = "0000000000000000000000000000000a"
