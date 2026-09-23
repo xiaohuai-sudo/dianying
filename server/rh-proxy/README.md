@@ -58,5 +58,6 @@ npx wrangler deploy
 ## 还没做的（下一步）
 
 1. ~~用一条真实运行钉死试镜档的实际秒数~~ 已完成：实测 20 积分/条，`REHEARSAL_PRE_DEDUCT` 已设为 40。
-2. 真正的登录态（现在只有 `X-User-Id`）。
+1. 真正的登录态（现在只有 `X-User-Id`）。
+2. 试镜档的 `nodeInfoList` 骨架见 `docs/video-generation-options.md` 第十节（节点 id 已实测）。
 3. 站内的「生成」按钮：前端只跟这个代理说话，永远不接触 RunningHub。

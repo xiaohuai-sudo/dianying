@@ -236,3 +236,37 @@ umt5-xxl-enc-bf16.safetensors / Wan2_1_VAE_bf16.safetensors
   （即 Plus 48G 档，与 0.2/0.4 的档位表一致）；一条**失败**的文生图扣 **0 RH币**——失败不计费，
   与代理「失败全额退还」的设计一致。
 - `/api/system/getConfig` 里 `loginDailyCoin = 100`：每天登录送 100 RH币（当前余额 1,008 币）。
+
+## 十、主力工作流的节点结构（下载 JSON 实测）
+
+从工作流页的「下载」拿到原始图（25 个节点），存在 `.studio/workflows/wan22-lightx2v-6step.json`
+（`.studio` 已 gitignore，是别人（T8star-Aix）的作品，不进仓库）。
+
+结构是标准的 **Wan 2.2 双阶段（high/low noise）i2v**：
+
+| 节点 | 类型 | 作用 | 默认值 |
+|---|---|---|---|
+| 4 | LoadImage | **参考图（首帧）** | 作者自己的 png |
+| 10 | CLIPTextEncode | **正向提示词** | "A girl crouched down and picked up a coin…" |
+| 1 | CLIPTextEncode | 反向提示词（长串中文） | — |
+| 23 / 24 / 25 | JWInteger | **宽度 / 高度 / 总帧数** | 704 / 544 / 81 |
+| 14 / 13 | UNETLoader | 高噪 / 低噪模型 | `wan2.2_i2v_high_noise_14B_fp8_scaled` / `..._low_noise_..._fp8_scaled` |
+| 15 / 21 | LoraLoaderModelOnly | LightX2V 蒸馏 LoRA | `...lightx2v_cfg_step_distill_lora_rank64` |
+| 17 / 18 | KSamplerAdvanced | 高噪段 / 低噪段采样器 | 各 **6 步**、lcm、切换点 3 |
+| 5 | WanImageToVideo | 图生视频主管线 | 704×544、81 帧、batch 1 |
+| 22 | VHS_VideoCombine | 合成为 mp4 | h264、crf 19、yuv420p |
+
+**代理注入参数就在这几个节点上**（`nodeInfoList`）：
+
+```json
+[
+  { "nodeId": "4",  "fieldName": "image",  "fieldValue": "<上传后拿到的 fileName>" },
+  { "nodeId": "10", "fieldName": "text",   "fieldValue": "<正向提示词>" },
+  { "nodeId": "23", "fieldName": "value",  "fieldValue": 704 },
+  { "nodeId": "24", "fieldName": "value",  "fieldValue": 544 },
+  { "nodeId": "25", "fieldName": "value",  "fieldValue": 81 }
+]
+```
+
+注意：宽度/高度/帧数**改大就会变贵**（积分 = GPU 秒），81 帧 704×544 是实测 20 积分的档位；
+把帧数提到 121 或分辨率提到 1280×704 之前，先跑一条看账单。
