@@ -14,7 +14,9 @@
     "studio:audit": "node scripts/studio/audit.mjs",
     "studio:palette": "node scripts/studio/palette-check.mjs",
     "studio:style": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/studio/ts-loader.mjs scripts/studio/style-check.mts",
-    "studio:style-demo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/studio/ts-loader.mjs scripts/studio/style-demo.mts"
+    "studio:style-demo": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/studio/ts-loader.mjs scripts/studio/style-demo.mts",
+    "proxy:dev": "node server/rh-proxy/dev-server.mjs",
+    "proxy:test": "node --test server/rh-proxy/test/flow.test.mjs"
   },
   "dependencies": {
     "next": "16.3.4",

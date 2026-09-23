@@ -9,3 +9,5 @@ out
 /dianyingwangzhan/
 # 工作台的本地决定记录（可提交的真源是 lib/palette-overrides.ts）
 .studio/
+# 生成代理的本地积分账本（部署时用 Workers KV，不进仓库）
+server/rh-proxy/.data/

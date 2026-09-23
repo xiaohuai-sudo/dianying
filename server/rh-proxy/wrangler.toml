@@ -1,0 +1,31 @@
+# Cloudflare Workers 部署配置
+# 用法：
+#   npx wrangler kv namespace create CREDITS   # 拿到 id 填到下面
+#   npx wrangler secret put RH_API_KEY         # 真跑时填 RunningHub 的 Key（别写进文件）
+#   npx wrangler deploy
+name = "jingjian-rh-proxy"
+main = "worker.mjs"
+compatibility_date = "2026-09-01"
+
+[vars]
+# mock = 假 provider（不花钱）；runninghub = 真调 RunningHub
+RH_PROVIDER = "mock"
+RH_API_BASE = "https://www.runninghub.cn"
+NEW_USER_CREDITS = "300"
+DAILY_SIGNIN_CREDITS = "20"
+CREDITS_PER_SECOND = "1"
+REHEARSAL_PRE_DEDUCT = "180"
+REHEARSAL_INSTANCE = "default"
+REHEARSAL_WEBAPP_ID = "1949884135491985409"
+REHEARSAL_WORKFLOW_ID = "1949877835465932801"
+QUEUE_TIMEOUT_SEC = "900"
+# 静态站来源，逗号分隔；上线时改成真实域名
+ALLOWED_ORIGINS = "https://xiaohuai-sudo.github.io,http://127.0.0.1:4175"
+
+# 成片档：拿到企业共享 Key 再打开
+# FINAL_MODEL_PATH = "kling-v3.0-std/image-to-video"
+# FINAL_PRE_DEDUCT = "60"
+
+[[kv_namespaces]]
+binding = "CREDITS"
+id = "<替换成 wrangler kv namespace create 输出的 id>"
