@@ -143,14 +143,22 @@ def main():
                 const ck = {}; document.cookie.split(';').forEach(s => { const i = s.indexOf('='); if (i>0) ck[s.slice(0,i).trim()] = s.slice(i+1).trim(); });
                 const r = await fetch('/task/list', {method:'POST',
                     headers:{'Content-Type':'application/json', 'Authorization': ck['Rh-Accesstoken'] || ''},
-                    credentials:'include', body: JSON.stringify({size:3, current:1, webappId: wid,
-                      taskType:['WORKFLOW','WEBAPP'], taskStatus:['SUCCESS','RUNNING','QUEUED','FAILED']})});
-                return (await r.text()).slice(0, 1500);
+                    credentials:'include', body: JSON.stringify({size:6, current:1, webappId: wid,
+                      taskType:['WORKFLOW','WEBAPP']})});
+                return (await r.text()).slice(0, 3000);
             }""", args.webapp)
             s = str(st)
-            found_task = task_id and task_id in s
-            done = '"SUCCESS"' in s or "成功" in s
-            failed = '"FAILED"' in s or "失败" in s
+            # 只看这个任务自己的状态，别被历史成功记录骗了
+            own = ""
+            for m in re.finditer(r"\{[^{}]*\}", s):
+                chunk = m.group(0)
+                if task_id and task_id in chunk:
+                    own = chunk
+            found_task = bool(own) or (task_id and task_id in s)
+            status_field = re.search(r'"(?:taskStatus|status)"\s*:\s*"([A-Z_]+)"', own or "")
+            stt = status_field.group(1) if status_field else ""
+            done = stt == "SUCCESS"
+            failed = stt in ("FAILED", "CANCELED")
             log(f"  轮询 {i}: 任务可见={found_task} 成功标记={done} 失败标记={failed}")
             if found_task and done:
                 # 取产出直链
