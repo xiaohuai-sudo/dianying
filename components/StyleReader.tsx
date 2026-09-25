@@ -5,6 +5,7 @@ import Link from "next/link";
 import { extractFeatures, type FrameFeatures } from "@/lib/frame-features";
 import { rankStyles, composePrompt, lumaToStops } from "@/lib/style-match";
 import { displayTag, withLocale } from "@/lib/i18n";
+import { SITE } from "@/lib/config";
 import type { Locale } from "@/lib/types";
 
 /**
@@ -15,7 +16,7 @@ import type { Locale } from "@/lib/types";
 const text = {
   zh: {
     uploadTitle: "上传一张画面",
-    uploadHint: "支持 JPG / PNG / WebP。图片只在你的浏览器里被分析，不会上传到任何服务器。",
+    uploadHint: "支持 JPG / PNG / WebP / AVIF。图片只在你的浏览器里被分析，不会上传到任何服务器。",
     choose: "选择图片", drop: "或把图片拖到这里", sample: "没有图？用站内画面试一下：",
     analyzing: "正在分析…", reset: "换一张",
     measured: "你的画面实测", styleCluster: "影调族", confidence: "匹配度",
@@ -35,7 +36,7 @@ const text = {
   },
   en: {
     uploadTitle: "Upload a frame",
-    uploadHint: "JPG / PNG / WebP. The image is analysed inside your browser and is never uploaded anywhere.",
+    uploadHint: "JPG / PNG / WebP / AVIF. The image is analysed inside your browser and is never uploaded anywhere.",
     choose: "Choose image", drop: "or drop an image here", sample: "No image handy? Try a frame from this site:",
     analyzing: "Analysing…", reset: "Replace image",
     measured: "Measured from your frame", styleCluster: "Tone family", confidence: "Match",
@@ -73,7 +74,11 @@ const inkFor = (hex: string) => {
 
 async function featuresFromSource(source: File | string): Promise<FrameFeatures> {
   const bitmap = typeof source === "string"
-    ? await createImageBitmap(await (await fetch(source)).blob())
+    ? await (async () => {
+        const response = await fetch(source);
+        if (!response.ok) throw new Error(`image ${response.status}`);
+        return createImageBitmap(await response.blob());
+      })()
     : await createImageBitmap(source);
   const scale = Math.min(1, 180 / bitmap.width);
   const canvas = document.createElement("canvas");
@@ -149,14 +154,14 @@ export function StyleReader({ locale = "zh" }: { locale?: Locale }) {
           <p className="mt-2 text-sm leading-7 text-muted">{copy.uploadHint}</p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <label className="button-primary cursor-pointer">{copy.choose}
-              <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void analyse(file, file.name); }} />
+              <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/avif" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void analyse(file, file.name); }} />
             </label>
             {features && <button type="button" onClick={reset} className="button-secondary">{copy.reset}</button>}
             <span className="text-xs text-muted">{busy ? copy.analyzing : copy.drop}</span>
           </div>
           <p className="mt-6 text-xs tracking-widest text-muted">{copy.sample}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {SAMPLES.map((slug) => <button key={slug} type="button" onClick={() => void analyse(`/images/frames-optimized/${slug}-960.webp`, slug)} className="tag min-h-11 hover:border-gold hover:text-gold">{slug}</button>)}
+            {SAMPLES.map((slug) => <button key={slug} type="button" onClick={() => void analyse(`${SITE.basePath}/images/frames-optimized/${slug}-960.webp`, slug)} className="tag min-h-11 hover:border-gold hover:text-gold">{slug}</button>)}
           </div>
           {error && <p className="mt-4 text-sm text-ember" role="alert">{error}</p>}
         </div>
