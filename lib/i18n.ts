@@ -147,8 +147,23 @@ export function frameReading(frame: Frame, locale: Locale): FrameReading {
 
 function seedDirection(frame: Frame) { return hash(frame.slug) % 2 ? "camera-left side" : "camera-right side"; }
 
-export function similarityReason(a: Frame, b: Frame, locale: Locale) {
-  const common = [...a.compositions, ...a.lights, ...a.colors].filter((item, index, all) => all.indexOf(item) === index && [...b.compositions, ...b.lights, ...b.colors].includes(item)).slice(0, 2);
-  if (!common.length) return locale === "zh" ? "共享相近的空间情绪" : "A related spatial mood";
-  return locale === "zh" ? `同为${common.join("＋")}` : `Shared ${common.map((item) => displayTag(item, locale)).join(" + ")}`;
+/**
+ * 相似画面的「理由」：按族（构图 / 光线 / 色彩 / 情绪）轮换首选项，
+ * 让同一组推荐里的三张卡给出互不重复、但都成立的理由。
+ * rank 就是卡片在列表里的序号。
+ */
+export function similarityReason(a: Frame, b: Frame, locale: Locale, rank = 0) {
+  const families: Array<[string, string[]]> = [
+    ["composition", a.compositions.filter((value) => b.compositions.includes(value))],
+    ["light", a.lights.filter((value) => b.lights.includes(value))],
+    ["color", a.colors.filter((value) => b.colors.includes(value))],
+    ["mood", a.moods.filter((value) => b.moods.includes(value))],
+  ].filter(([, values]) => values.length > 0) as Array<[string, string[]]>;
+  if (!families.length) return locale === "zh" ? "共享相近的空间情绪" : "A related spatial mood";
+  const [family, values] = families[rank % families.length];
+  const joined = values.slice(0, 2).map((value) => displayTag(value, locale)).join(locale === "zh" ? "＋" : " + ");
+  const prefix = locale === "zh"
+    ? { composition: "同一类构图", light: "同一类用光", color: "同一类色调", mood: "同一类情绪" }[family] ?? "同为"
+    : { composition: "Same composition", light: "Same kind of light", color: "Same palette", mood: "Same mood" }[family] ?? "Shared";
+  return locale === "zh" ? `${prefix}：${joined}` : `${prefix}: ${joined}`;
 }

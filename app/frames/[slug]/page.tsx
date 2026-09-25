@@ -9,6 +9,8 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { getFilm, getFrame, publicFrames } from "@/lib/data";
 import { getFrameTone } from "@/lib/frame-tones.generated";
 import { buildFrameStudy } from "@/lib/visual-index";
+import { similarityReason } from "@/lib/i18n";
+import { FrameNav } from "@/components/FrameNav";
 
 export function generateStaticParams() { return publicFrames.map(({ slug }) => ({ slug })); }
 
@@ -23,6 +25,10 @@ export default async function FramePage({ params }: { params: Promise<{ slug: st
   if (!film) notFound();
   const study = buildFrameStudy(item);
   const similar = publicFrames.filter((candidate) => candidate.slug !== item.slug).map((candidate) => ({ candidate, score: candidate.colors.filter((x) => item.colors.includes(x)).length + candidate.compositions.filter((x) => item.compositions.includes(x)).length + candidate.moods.filter((x) => item.moods.includes(x)).length })).sort((a, b) => b.score - a.score).slice(0, 3).map(({ candidate }) => candidate);
+  const filmFrames = film.frameIds.map((id) => getFrame(id)).filter((x): x is NonNullable<typeof x> => Boolean(x));
+  const current = Math.max(0, filmFrames.findIndex((x) => x.slug === item.slug));
+  const prev = filmFrames[(current - 1 + filmFrames.length) % filmFrames.length] ?? item;
+  const next = filmFrames[(current + 1) % filmFrames.length] ?? item;
   const facts = [["景别", item.shotSize], ["构图方式", item.compositions.join("、")], ["光线方向", item.lightDirection], ["光线软硬", item.lightQuality], ["人物位置", item.subjectPosition], ["视觉重心", item.visualFocus], ["时间", item.time]];
   return <div className="site-container py-10 sm:py-14">
     <nav aria-label="面包屑" className="text-xs text-muted"><Link href="/explore" className="hover:text-paper">探索</Link><span className="mx-2">/</span><Link href={`/films/${film.slug}`} className="hover:text-paper">{film.title}</Link><span className="mx-2">/</span><span className="text-paper">{item.title}</span></nav>
@@ -40,6 +46,7 @@ export default async function FramePage({ params }: { params: Promise<{ slug: st
       </div>
     </section>
     <section className="mt-16"><CopyrightPanel info={item.copyright} /></section>
-    <section className="section"><p className="section-kicker">SIMILAR FRAMES · 相似画面</p><h2 className="section-title">继续观看</h2><div className="mt-9 grid gap-7 md:grid-cols-3">{similar.map((frame) => <FrameCard key={frame.slug} frame={frame} />)}</div></section>
+    <section className="section"><p className="section-kicker">NEXT UP · 下一步看什么</p><h2 className="section-title">带着理由继续观看</h2><p className="mt-4 max-w-2xl text-sm leading-7 text-muted">这三帧与当前画面共享同一类视觉手段——先看它们共有的那一项，再回头比较差异，比随便翻下一张更有收获。</p><div className="mt-9 grid gap-7 md:grid-cols-3">{similar.map((frame, index) => <FrameCard key={frame.slug} frame={frame} reason={similarityReason(item, frame, "zh", index)} />)}</div></section>
+    <FrameNav locale="zh" prev={{ href: `/frames/${prev.slug}`, title: prev.title }} next={{ href: `/frames/${next.slug}`, title: next.title }} position={{ index: current + 1, total: filmFrames.length }} />
   </div>;
 }
